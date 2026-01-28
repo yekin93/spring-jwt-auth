@@ -3,7 +3,7 @@ package com.example.demo.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.request.AuthSignupDto;
+import com.example.demo.dto.request.SignupDto;
 import com.example.demo.entity.User;
 import com.example.demo.exception.DuplicateEntryException;
 import com.example.demo.exception.NotFoundException;
@@ -23,10 +23,10 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public User saveUser(AuthSignupDto authSignupDto) {
-		User existsUser = userRepo.findByEmail(authSignupDto.getEmail()).orElse(null);
+	public User saveUser(SignupDto authSignupDto) {
+		User existsUser = userRepo.findByEmail(authSignupDto.email()).orElse(null);
 		if(existsUser != null) {
-			throw new DuplicateEntryException("Already exists user with email: " + authSignupDto.getEmail());
+			throw new DuplicateEntryException("Already exists user with email: " + authSignupDto.email());
 		}
 		User user = UserMapper.authSignupToUser(authSignupDto);
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
