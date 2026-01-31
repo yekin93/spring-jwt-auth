@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -36,6 +37,27 @@ public class RefreshTokenService implements IRefreshTokenService {
 		token.setExpiryDate(Instant.now().plusMillis(jwtProperties.getRefreshTokenExpirationTimeMs()));
 		token.setToken(UUID.randomUUID().toString());
 		return refreshTokenRepo.save(token);
+	}
+
+	@Override
+	public Optional<RefreshToken> findByToken(String token) {
+		return refreshTokenRepo.findByTokenAndRevokedFalse(token);
+	}
+
+	@Override
+	public RefreshToken verifyExpiration(RefreshToken token) {
+		if(token.getExpiryDate().compareTo(Instant.now()) < 0) {
+			refreshTokenRepo.delete(token);
+			throw new RuntimeException("Refresh token invalid or expired...");
+		}
+		return token;
+	}
+
+	@Override
+	public void revokeRefreshToken(String token) {
+		RefreshToken refreshToken = findByToken(token).orElseThrow(() -> new RuntimeException("Invalide refresh token"));
+		refreshToken.setRevoked(true);
+		refreshTokenRepo.save(refreshToken);
 	}
 
 }

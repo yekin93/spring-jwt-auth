@@ -18,6 +18,6 @@ public class UserController {
 	@GetMapping("/profile")
 	public ResponseEntity<Map<String, Object>> getUserProfile(Authentication authentication) {
 		CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-		return ResponseEntity.status(HttpStatus.OK).body(Map.of("user", user));
+		return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", Map.of("user", user)));
 	}
 }

@@ -1,8 +1,6 @@
 package com.example.demo.custom;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
