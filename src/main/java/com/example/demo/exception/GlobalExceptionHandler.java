@@ -1,10 +1,12 @@
 package com.example.demo.exception;
 
+import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -48,6 +50,11 @@ public class GlobalExceptionHandler {
         }
         
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("status", HttpStatus.BAD_REQUEST.value(), "errors", errors));
+	}
+	
+	@ExceptionHandler(AuthorizationDeniedException.class)
+	public ResponseEntity<Map<String, Object>> accessDeniedExceptionHandle(AuthorizationDeniedException ex) {
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("status", HttpStatus.FORBIDDEN.value(), "message", "You don`t have permission to access"));
 	}
 	
 }

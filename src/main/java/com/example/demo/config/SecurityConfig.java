@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +23,7 @@ import com.example.demo.filter.JwtAuthFilter;
 import com.example.demo.service.CustomUserDetailsService;
 
 @Configuration
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
 	private final JwtAuthFilter jwtAuthFilter;
@@ -43,7 +45,6 @@ public class SecurityConfig {
 		.csrf((csfr) -> csfr.disable())
 		.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 		.authorizeHttpRequests((req) -> req.requestMatchers("/api/auth/**").permitAll()
-				.requestMatchers("/api/roles").hasAuthority("ROLE_ADMIN")
 				.anyRequest().authenticated())
 		.exceptionHandling(t -> t.authenticationEntryPoint(authenticationEntryPoint))
 		.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

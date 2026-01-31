@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +23,7 @@ public class RoleController {
 
 	
 	@GetMapping
+	@PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('READ_ROLES')")
 	public ResponseEntity<Map<String, Object>> getAllRoles() {
 		return ResponseEntity.status(HttpStatus.OK.value()).body(Map.of("status", HttpStatus.OK.value(), "roles", roleService.getAll()));
 	}
