@@ -54,7 +54,7 @@ public class AuthController {
 	}
 	
 	@PostMapping("/login")
-	public ResponseEntity<Map<String, Object>> login(@RequestBody AuthLoginDto authLoginDto, HttpServletRequest req) {
+	public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequestDto authLoginDto, HttpServletRequest req) {
 		Authentication authentication = authManager.authenticate(
 				new UsernamePasswordAuthenticationToken(authLoginDto.email(), authLoginDto.password()));
 		
