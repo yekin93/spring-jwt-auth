@@ -1,9 +1,7 @@
 package com.example.demo.controller;
 
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,7 +12,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +27,9 @@ import com.example.demo.util.JwtUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("api/auth")
 public class AuthController {
@@ -55,6 +54,7 @@ public class AuthController {
 	
 	@PostMapping("/login")
 	public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequestDto authLoginDto, HttpServletRequest req) {
+		log.info("Login attempt - email: {}", authLoginDto.email());
 		Authentication authentication = authManager.authenticate(
 				new UsernamePasswordAuthenticationToken(authLoginDto.email(), authLoginDto.password()));
 		
@@ -70,6 +70,9 @@ public class AuthController {
 									.path("/auth")
 									.maxAge(Duration.ofDays(7))
 									.build();
+		
+		log.info("Login successfully - email: {}", userDetails.getUsername());
+		
 		return ResponseEntity.status(HttpStatus.OK)
 				.header(HttpHeaders.SET_COOKIE, cookie.toString())
 				.body(Map.of("data", Map.of("token", token, "refresh_token", refreshToken.getToken(), "user", userDetails)));

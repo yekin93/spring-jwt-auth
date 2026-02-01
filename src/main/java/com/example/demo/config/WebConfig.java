@@ -10,11 +10,11 @@ public class WebConfig implements WebMvcConfigurer {
 	
 	@Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**") // Hangi endpoint'lere izin verilecek
-                .allowedOrigins("http://localhost:3000") // Frontend URL'i
+        registry.addMapping("/api/**")
+                .allowedOrigins("http://localhost:3000")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(true) // Cookie gönderilecekse
-                .maxAge(3600); // Preflight cache süresi (1 saat)
+                .allowCredentials(true)
+                .maxAge(3600);
     }
 }
