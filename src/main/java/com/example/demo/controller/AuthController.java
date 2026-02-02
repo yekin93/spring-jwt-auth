@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +13,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +24,7 @@ import com.example.demo.dto.request.LoginRequestDto;
 import com.example.demo.dto.request.SignupDto;
 import com.example.demo.entity.RefreshToken;
 import com.example.demo.entity.User;
+import com.example.demo.service.interfaces.IConfirmationService;
 import com.example.demo.service.interfaces.IRefreshTokenService;
 import com.example.demo.service.interfaces.IUserService;
 import com.example.demo.util.JwtUtil;
@@ -38,12 +42,16 @@ public class AuthController {
 	private final JwtUtil jwtUtil;
 	private final IUserService userService;
 	private final IRefreshTokenService refreshTokenService;
+	private final IConfirmationService confirmationService;
 	
-	public AuthController(AuthenticationManager authManager, JwtUtil jwtUtil, IUserService userService, IRefreshTokenService refreshTokenService) {
+	public AuthController(AuthenticationManager authManager, JwtUtil jwtUtil, IUserService userService,
+			IRefreshTokenService refreshTokenService,
+			IConfirmationService confirmationSerive) {
 		this.authManager = authManager;
 		this.jwtUtil = jwtUtil;
 		this.userService = userService;
 		this.refreshTokenService = refreshTokenService;
+		this.confirmationService = confirmationSerive;
 	}
 	
 	@PostMapping("/signup")
@@ -91,5 +99,11 @@ public class AuthController {
 	public ResponseEntity<Map<String, String>> logout(@CookieValue(name = "refresh_token", required = true) String refreshToken) {
 		refreshTokenService.revokeRefreshToken(refreshToken);
 		return ResponseEntity.status(HttpStatus.OK.value()).body(Map.of("message", "logget out successfully"));
+	}
+	
+	@GetMapping("/confirm/{token}")
+	public ResponseEntity<Map<String, Object>> confirmUser(@PathVariable String token) throws Exception {
+		confirmationService.confirmUser(token);
+		return ResponseEntity.status(HttpStatus.OK).body(Map.of("status", HttpStatus.OK.value(), "message", "user confirmed successully", "confirmt", true));
 	}
 }

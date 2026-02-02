@@ -29,7 +29,7 @@ public class RefreshTokenService implements IRefreshTokenService {
 	
 	@Override
 	public RefreshToken createRefreshToken(String userEmail, String ipAddress, String userAgent) {
-		User user = userRepo.findByEmail(userEmail).orElseThrow(() -> new NotFoundException("User not found:" + userEmail));
+		User user = userRepo.findByEmailAndConfirmedTrue(userEmail).orElseThrow(() -> new NotFoundException("User not found:" + userEmail));
 		RefreshToken token = new RefreshToken();
 		token.setUser(user);
 		token.setIpAddress(ipAddress);

@@ -45,6 +45,9 @@ public class User {
 	@Column(name = "created_at", nullable = false)
 	private Instant createdAt;
 	
+	@Column(name = "confirmed", nullable = false)
+	private boolean confirmed;
+	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(
 		name = "user_role",
@@ -142,5 +145,13 @@ public class User {
 
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
+	}
+
+	public boolean isConfirmed() {
+		return confirmed;
+	}
+
+	public void setConfirmed(boolean confirmed) {
+		this.confirmed = confirmed;
 	}
 }

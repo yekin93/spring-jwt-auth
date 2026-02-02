@@ -1,6 +1,7 @@
 package com.example.demo.filter;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.example.demo.custom.CustomUserDetails;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.service.CustomUserDetailsService;
 import com.example.demo.util.JwtUtil;
 
@@ -44,9 +46,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 		try {
 			setupMDC(request);
 			final String authHeader = request.getHeader("Authorization");
-			String email = null;
+			
 			String jwt = null;
 			CustomUserDetails userDetails = null;
+			String email = null;
 			
 			if (authHeader == null || !authHeader.startsWith("Bearer ")) {
 	            filterChain.doFilter(request, response);
@@ -59,12 +62,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 			} 
 			
 			if(email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-				userDetails = userDetailsService.loadUserByUsername(email);
+				try {
+					userDetails = userDetailsService.loadUserByUsername(email);
+				} catch (NotFoundException e) {
+		        	log.warn("User not found during JWT authentication: {}", email);
+		        	handleNotFoundException(response, "User not found");
+		        }
 				if(jwtUtil.isTokenValid(jwt, userDetails.getUsername())) {
 					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 					SecurityContextHolder.getContext().setAuthentication(authToken);
-					System.out.println("AUTH SET: " + SecurityContextHolder.getContext().getAuthentication());
 				}
+				
 			}
 			if(userDetails != null) {
 				updateMDCWithUser(userDetails);
@@ -97,6 +105,23 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 			MDC.clear();
 		}
 	}
+	
+	private void handleNotFoundException(HttpServletResponse response, String message) throws IOException {
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        response.setContentType("application/json;charset=UTF-8");
+        
+        String jsonResponse = String.format("""
+            {
+                "status": 404,
+                "error": "Not Found",
+                "message": "%s",
+                "timestamp": "%s"
+            }
+            """, message, Instant.now());
+        
+        response.getWriter().write(jsonResponse);
+    }
+	
 	private void handleInvalidJwtException(HttpServletResponse response, String message) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json;charset=UTF-8");

@@ -8,6 +8,7 @@ import com.example.demo.entity.User;
 
 public interface UserRepo extends JpaRepository<User, Long>{
 
+	Optional<User> findByEmailAndConfirmedTrue(String email);
 	Optional<User> findByEmail(String email);
 	Optional<User> findByUsername(String username);
 	boolean existsByUsername(String username);
