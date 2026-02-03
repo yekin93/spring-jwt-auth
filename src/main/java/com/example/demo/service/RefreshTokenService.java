@@ -14,6 +14,9 @@ import com.example.demo.repository.UserRepo;
 import com.example.demo.service.interfaces.IRefreshTokenService;
 import com.example.demo.util.JwtProperties;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class RefreshTokenService implements IRefreshTokenService {
 
@@ -30,6 +33,7 @@ public class RefreshTokenService implements IRefreshTokenService {
 	@Override
 	public RefreshToken createRefreshToken(String userEmail, String ipAddress, String userAgent) {
 		User user = userRepo.findByEmailAndConfirmedTrue(userEmail).orElseThrow(() -> new NotFoundException("User not found:" + userEmail));
+		log.info("YKN {}", user.getEmail());
 		RefreshToken token = new RefreshToken();
 		token.setUser(user);
 		token.setIpAddress(ipAddress);

@@ -156,12 +156,10 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
         return ip;
     }
     
-    /**
-     * Static dosyaları loglama
-     */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
+        log.info("YKN not filter {}", path);
         return path.endsWith(".css") || 
                path.endsWith(".js") || 
                path.endsWith(".png") || 

@@ -6,4 +6,5 @@ import com.example.demo.entity.User;
 public interface IUserService {
 	User saveUser(SignupDto authSignupDto);
 	User findByUsername(String username);
+	User findById(Long id);
 }
