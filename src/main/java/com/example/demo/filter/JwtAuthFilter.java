@@ -52,9 +52,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 			String email = null;
 			
 			if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-	            filterChain.doFilter(request, response);
-	            return;
-	        }
+				filterChain.doFilter(request, response);
+				return;
+			}
 			
 			if(authHeader != null && authHeader.startsWith("Bearer ")) {
 				jwt = authHeader.substring(7);
@@ -65,9 +65,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 				try {
 					userDetails = userDetailsService.loadUserByUsername(email);
 				} catch (NotFoundException e) {
-		        	log.warn("User not found during JWT authentication: {}", email);
-		        	handleNotFoundException(response, "User not found");
-		        }
+					log.warn("User not found during JWT authentication: {}", email);
+					handleNotFoundException(response, "User not found");
+				}
 				if(jwtUtil.isTokenValid(jwt, userDetails.getUsername())) {
 					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 					SecurityContextHolder.getContext().setAuthentication(authToken);

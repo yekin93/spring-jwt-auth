@@ -22,6 +22,9 @@ import com.example.demo.exception.GlobalExceptionHandler;
 import com.example.demo.filter.JwtAuthFilter;
 import com.example.demo.service.CustomUserDetailsService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {

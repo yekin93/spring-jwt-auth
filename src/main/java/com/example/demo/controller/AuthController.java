@@ -22,8 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.request.LoginRequestDto;
 import com.example.demo.dto.request.SignupDto;
+import com.example.demo.dto.response.ApiResponse;
+import com.example.demo.dto.response.UserResponseDto;
 import com.example.demo.entity.RefreshToken;
 import com.example.demo.entity.User;
+import com.example.demo.mapper.UserMapper;
 import com.example.demo.service.interfaces.IConfirmationService;
 import com.example.demo.service.interfaces.IRefreshTokenService;
 import com.example.demo.service.interfaces.IUserService;
@@ -55,9 +58,10 @@ public class AuthController {
 	}
 	
 	@PostMapping("/signup")
-	public ResponseEntity<Map<String, Object>> signup(@Valid @RequestBody SignupDto authSignupDto) {
+	public ResponseEntity<ApiResponse<UserResponseDto>> signup(@Valid @RequestBody SignupDto authSignupDto) {
 		User created = userService.saveUser(authSignupDto);
-		return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("id", created.getId(), "username", created.getUsername()));
+		UserResponseDto userDto = UserMapper.userToUserReponseDto(created);
+		return ResponseEntity.ok(ApiResponse.created(userDto));
 	}
 	
 	@PostMapping("/login")

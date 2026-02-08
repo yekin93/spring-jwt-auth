@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.response.ApiResponse;
+import com.example.demo.entity.Role;
 import com.example.demo.service.interfaces.IRoleService;
 
 @RestController
@@ -23,9 +26,10 @@ public class RoleController {
 
 	
 	@GetMapping
-	@PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('READ_ROLES')")
-	public ResponseEntity<Map<String, Object>> getAllRoles() {
-		return ResponseEntity.status(HttpStatus.OK.value()).body(Map.of("status", HttpStatus.OK.value(), "roles", roleService.getAll()));
+	@PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
+	public ResponseEntity<ApiResponse<List<Role>>> getAllRoles() {
+		List<Role> roles = roleService.getAll();
+		return ResponseEntity.ok(ApiResponse.success(roles));
 	}
 	
 }

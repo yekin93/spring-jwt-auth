@@ -14,11 +14,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name="users")
 public class User {
@@ -56,20 +62,9 @@ public class User {
 	)
 	private Set<Role> roles = new HashSet<>();
 	
-	public User() {}
+	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+	private OrganizerProfile organizerProfile;
 	
-	public User(Long id, String username, String surname, String email, String password, Instant modifiedAt,
-			Instant createdAt, Set<Role> roles) {
-		super();
-		this.id = id;
-		this.username = username;
-		this.surname = surname;
-		this.email = email;
-		this.password = password;
-		this.modifiedAt = modifiedAt;
-		this.createdAt = createdAt;
-		this.roles = roles;
-	}
 
 	@PrePersist
 	public void prePersist() {
@@ -80,78 +75,5 @@ public class User {
 	@PreUpdate
 	public void preUpdate() {
 		if(this.modifiedAt == null) this.modifiedAt = Instant.now();
-	}
-	
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getSurname() {
-		return surname;
-	}
-
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public Instant getModifiedAt() {
-		return modifiedAt;
-	}
-
-	public void setModifiedAt(Instant modifiedAt) {
-		this.modifiedAt = modifiedAt;
-	}
-
-	public Instant getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(Instant createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public Set<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
-	}
-
-	public boolean isConfirmed() {
-		return confirmed;
-	}
-
-	public void setConfirmed(boolean confirmed) {
-		this.confirmed = confirmed;
 	}
 }
