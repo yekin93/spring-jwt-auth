@@ -62,10 +62,11 @@ public class Event {
 	public void prePersist() {
 		if(createdAt == null) this.createdAt = Instant.now();
 		if(modifiedAt == null) this.modifiedAt = this.createdAt;
+		if(status == null) this.status = EventStatus.DRAFTED;
 	}
 	
 	@PreUpdate
 	public void preUpdate() {
-		if(this.modifiedAt == null) this.modifiedAt = Instant.now();
+		this.modifiedAt = Instant.now();
 	}
 }
