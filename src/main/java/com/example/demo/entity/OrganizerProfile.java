@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import java.time.Instant;
+import java.util.List;
 
 import com.example.demo.enums.OrganizerStatus;
 
@@ -14,6 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -76,6 +78,9 @@ public class OrganizerProfile {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "verified_user_id")
 	private User verifiedBy;
+	
+	@OneToMany(mappedBy = "organizer", fetch = FetchType.LAZY)
+	private List<Event> events;
 	
 	@PrePersist
 	public void prePersist() {
