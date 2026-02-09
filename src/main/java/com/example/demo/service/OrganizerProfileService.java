@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -76,13 +78,13 @@ public class OrganizerProfileService implements IOrganizerProfileService {
 	}
 
 	@Override
-	public List<OrganizerProfile> search(OrganizerSearchDto search) {
+	public Page<OrganizerProfile> search(OrganizerSearchDto search, Pageable pageable) {
 		Specification<OrganizerProfile> specs = Specification
 				.where(OrganizerSpec.hasName(search.q()))
 				.and(OrganizerSpec.isVerified(search.verified()))
 				.and(OrganizerSpec.createdBetween(search.startDate(), search.endDate()))
 				.and(OrganizerSpec.hasEmail(search.email()));
-		return organizerRepo.findAll(specs);
+		return organizerRepo.findAll(specs, pageable);
 	}
 
 }

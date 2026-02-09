@@ -64,10 +64,18 @@ public class AdminController {
 	
 	@PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
 	@GetMapping("/organizer/search")
-	public ResponseEntity<ApiResponse<List<OrganizerProfileResponseDto>>> searchByName(@ModelAttribute OrganizerSearchDto searchDto){
-		List<OrganizerProfile> organizers = organizerService.search(searchDto);
-		List<OrganizerProfileResponseDto> response = organizers.stream().map(OrganizerProfileMapper::OrganizerProfileToResponse).toList();
-		return ResponseEntity.ok(ApiResponse.success(response));
+	public ResponseEntity<ApiResponsePagination<List<OrganizerProfileResponseDto>>> searchByName(@ModelAttribute OrganizerSearchDto searchDto,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "0") int size,
+			@RequestParam(defaultValue = "ASC") String direction,
+			@RequestParam(defaultValue = "createdAt") String sortBy){
+		
+		Sort.Direction sortDirection = direction.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
+		PageRequest pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+		Page<OrganizerProfile> organizers = organizerService.search(searchDto, pageable);
+		List<OrganizerProfileResponseDto> response = organizers.getContent().stream().map(OrganizerProfileMapper::OrganizerProfileToResponse).toList();
+		return ResponseEntity.ok(ApiResponsePagination.success(response, organizers.getTotalElements(), organizers.getTotalPages(), organizers.isFirst(), organizers.isLast(),
+				organizers.hasNext(), organizers.hasPrevious()));
 	}
 	
 	@PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")

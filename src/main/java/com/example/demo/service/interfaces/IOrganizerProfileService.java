@@ -3,6 +3,9 @@ package com.example.demo.service.interfaces;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.example.demo.dto.projection.IOrganizerProfileAdminView;
 import com.example.demo.dto.request.OrganizerSearchDto;
 import com.example.demo.entity.OrganizerProfile;
@@ -14,5 +17,5 @@ public interface IOrganizerProfileService {
 	List<IOrganizerProfileAdminView> getOrganizerProfileListByStatus(OrganizerStatus status);
 	void verifyOrganizerProfile(Long approverId, String organizerSlug);
 	List<OrganizerProfile> searchByName(String name);
-	List<OrganizerProfile> search(OrganizerSearchDto saerch);
+	Page<OrganizerProfile> search(OrganizerSearchDto saerch, Pageable pageable);
 }
