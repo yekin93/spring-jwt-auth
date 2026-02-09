@@ -2,6 +2,9 @@ package com.example.demo.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,12 +19,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.custom.CustomUserDetails;
 import com.example.demo.dto.projection.IOrganizerProfileAdminView;
 import com.example.demo.dto.request.OrganizerSearchDto;
+import com.example.demo.dto.request.UserSearchDto;
 import com.example.demo.dto.response.ApiResponse;
+import com.example.demo.dto.response.ApiResponsePagination;
 import com.example.demo.dto.response.OrganizerProfileResponseDto;
+import com.example.demo.dto.response.UserResponseDto;
 import com.example.demo.entity.OrganizerProfile;
+import com.example.demo.entity.User;
 import com.example.demo.enums.OrganizerStatus;
 import com.example.demo.mapper.OrganizerProfileMapper;
+import com.example.demo.mapper.UserMapper;
 import com.example.demo.service.interfaces.IOrganizerProfileService;
+import com.example.demo.service.interfaces.IUserService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,9 +40,11 @@ import lombok.extern.slf4j.Slf4j;
 public class AdminController {
 	
 	private final IOrganizerProfileService organizerService;
+	private final IUserService userService;
 	
-	public AdminController(IOrganizerProfileService organizerService) {
+	public AdminController(IOrganizerProfileService organizerService, IUserService userService) {
 		this.organizerService = organizerService;
+		this.userService = userService;
 	}
 	
 
@@ -57,5 +68,22 @@ public class AdminController {
 		List<OrganizerProfile> organizers = organizerService.search(searchDto);
 		List<OrganizerProfileResponseDto> response = organizers.stream().map(OrganizerProfileMapper::OrganizerProfileToResponse).toList();
 		return ResponseEntity.ok(ApiResponse.success(response));
+	}
+	
+	@PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
+	@GetMapping("/user/search")
+	public ResponseEntity<ApiResponsePagination<List<UserResponseDto>>> userSearch(@ModelAttribute UserSearchDto searchDto, 
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "ASC") String direction,
+			@RequestParam(defaultValue = "createdAt") String sortBy){
+		
+		
+		Sort.Direction sortDirection = direction.equals("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;
+		
+		PageRequest pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+		Page<User> users = userService.search(searchDto, pageable);
+		List<UserResponseDto> response = users.getContent().stream().map(UserMapper::userToUserReponseDto).toList();
+		return ResponseEntity.ok(ApiResponsePagination.success(response, users.getTotalElements(), users.getTotalPages(), users.isFirst(), users.isLast(), users.hasNext(), users.hasPrevious()));
 	}
 }

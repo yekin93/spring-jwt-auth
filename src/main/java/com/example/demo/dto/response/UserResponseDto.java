@@ -12,7 +12,7 @@ public record UserResponseDto(
 		String username,
 		String surname,
 		String email,
-		Set<Role> roles,
+		Set<String> roles,
 		OrganizerProfileResponseDto organizerProfile,
 		Instant createdAt
 		

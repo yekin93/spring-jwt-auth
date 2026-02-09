@@ -1,7 +1,11 @@
 package com.example.demo.mapper;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.example.demo.dto.request.SignupDto;
 import com.example.demo.dto.response.UserResponseDto;
+import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
 
 public class UserMapper {
@@ -11,13 +15,21 @@ public class UserMapper {
 	}
 	
 	public static UserResponseDto userToUserReponseDto(User user) {
-		return user == null ? null : 
-			new UserResponseDto(user.getId(),
+		if(user == null) return null;
+		
+			Set<String> roles = new HashSet<>();
+			for(Role role : user.getRoles()) {
+				roles.add(role.getName());	
+			}
+		
+			UserResponseDto dto = new UserResponseDto(user.getId(),
 					user.getUsername(),
 					user.getSurname(),
 					user.getEmail(),
-					user.getRoles(),
+					roles,
 					OrganizerProfileMapper.OrganizerProfileToResponse(user.getOrganizerProfile()),
 					user.getCreatedAt());
+		
+		return dto;
 	}
 }

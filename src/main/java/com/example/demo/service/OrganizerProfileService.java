@@ -79,7 +79,9 @@ public class OrganizerProfileService implements IOrganizerProfileService {
 	public List<OrganizerProfile> search(OrganizerSearchDto search) {
 		Specification<OrganizerProfile> specs = Specification
 				.where(OrganizerSpec.hasName(search.q()))
-				.and(OrganizerSpec.isVerified(search.verified()));
+				.and(OrganizerSpec.isVerified(search.verified()))
+				.and(OrganizerSpec.createdBetween(search.startDate(), search.endDate()))
+				.and(OrganizerSpec.hasEmail(search.email()));
 		return organizerRepo.findAll(specs);
 	}
 

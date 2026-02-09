@@ -1,5 +1,13 @@
 package com.example.demo.dto.request;
 
-public record OrganizerSearchDto(boolean verified, String q) {
+import java.time.Instant;
+
+public record OrganizerSearchDto(
+		Boolean verified,
+		String q,
+		Instant startDate,
+		Instant endDate,
+		String email
+		) {
 	
 }
