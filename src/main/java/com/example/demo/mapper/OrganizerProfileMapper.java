@@ -9,7 +9,7 @@ public class OrganizerProfileMapper {
 
 	public static OrganizerProfile organizerProfileCreateDtoToOrganizerProfile(OrganizerProfileCreateDto dto) {
 		return new OrganizerProfile(null, dto.displayName(), OrganizerStatus.PENDING, null, null, dto.email(), dto.phone(), dto.bio(), dto.avatarUrl(),
-				null, null, false, null, null);
+				null, null, false, null, null, null);
 	}
 	
 	public static OrganizerProfileResponseDto OrganizerProfileToResponse(OrganizerProfile profile) {
