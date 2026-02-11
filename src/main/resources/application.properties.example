@@ -17,3 +17,6 @@ spring.jpa.properties.hibernate.format_sql=true
 jwt.refresh-token-expiration-time-ms=604800000
 jwt.access-token-expiration-time-ms=900000
 jwt.secret-key=dsadas
+
+#CORS
+cors.allowed-origins=http://localhost:3000

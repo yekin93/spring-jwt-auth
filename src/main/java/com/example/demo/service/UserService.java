@@ -45,7 +45,7 @@ public class UserService implements IUserService {
 		User user = UserMapper.authSignupToUser(authSignupDto);
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		User createdUser = userRepo.save(user);
-		String confirmToken = UUID.randomUUID().toString().substring(0, 8);
+		String confirmToken = UUID.randomUUID().toString();
 		Confirmation confirm = new Confirmation(null, confirmToken, createdUser, null, null);
 		confirmationRepo.save(confirm);
 		return createdUser;

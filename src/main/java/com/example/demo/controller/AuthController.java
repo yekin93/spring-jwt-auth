@@ -77,7 +77,7 @@ public class AuthController {
 		
 		ResponseCookie cookie = ResponseCookie.from("refresh_token", refreshToken.getToken())
 									.httpOnly(true)
-									.secure(false)
+									.secure(true)
 									.sameSite("Strict")
 									.path("/auth")
 									.maxAge(Duration.ofDays(7))
@@ -87,7 +87,7 @@ public class AuthController {
 		
 		return ResponseEntity.status(HttpStatus.OK)
 				.header(HttpHeaders.SET_COOKIE, cookie.toString())
-				.body(Map.of("data", Map.of("token", token, "refresh_token", refreshToken.getToken(), "user", userDetails)));
+				.body(Map.of("data", Map.of("token", token, "user", userDetails)));
 		
 	}
 	
@@ -102,7 +102,7 @@ public class AuthController {
 	@PostMapping("/logout")
 	public ResponseEntity<Map<String, String>> logout(@CookieValue(name = "refresh_token", required = true) String refreshToken) {
 		refreshTokenService.revokeRefreshToken(refreshToken);
-		return ResponseEntity.status(HttpStatus.OK.value()).body(Map.of("message", "logget out successfully"));
+		return ResponseEntity.status(HttpStatus.OK.value()).body(Map.of("message", "logged out successfully"));
 	}
 	
 	@GetMapping("/confirm/{token}")
