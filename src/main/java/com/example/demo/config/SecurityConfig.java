@@ -1,7 +1,9 @@
 package com.example.demo.config;
 
 import java.util.Arrays;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,6 +36,9 @@ public class SecurityConfig {
 	private final CustomUserDetailsService userDetailsService;
 	private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 	
+	@Value("${cors.allowed-origins:http://localhost:3000}")
+	private String allowedOrigins;
+	
 	public SecurityConfig(JwtAuthFilter jwtAuthFilter, PasswordEncoder passwordEncoder, CustomUserDetailsService userDetailsService,
 			CustomAuthenticationEntryPoint authenticationEntryPoint) {
 		this.jwtAuthFilter = jwtAuthFilter;
@@ -57,7 +62,9 @@ public class SecurityConfig {
 	@Bean
     protected CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        // Parse comma-separated origins from configuration
+        List<String> origins = Arrays.asList(allowedOrigins.split(","));
+        configuration.setAllowedOrigins(origins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

@@ -64,13 +64,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 			if(email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 				try {
 					userDetails = userDetailsService.loadUserByUsername(email);
+					if(userDetails != null && jwtUtil.isTokenValid(jwt, userDetails.getUsername())) {
+						UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+						SecurityContextHolder.getContext().setAuthentication(authToken);
+					}
 				} catch (NotFoundException e) {
 					log.warn("User not found during JWT authentication: {}", email);
 					handleNotFoundException(response, "User not found");
-				}
-				if(jwtUtil.isTokenValid(jwt, userDetails.getUsername())) {
-					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-					SecurityContextHolder.getContext().setAuthentication(authToken);
+					return;
 				}
 				
 			}
