@@ -86,5 +86,4 @@ public class OrganizerProfileService implements IOrganizerProfileService {
 				.and(OrganizerSpec.hasEmail(search.email()));
 		return organizerRepo.findAll(specs, pageable);
 	}
-
 }

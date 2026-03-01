@@ -25,6 +25,10 @@ public class CustomUserDetails implements UserDetails {
 		return user.getEmail();
 	}
 	
+	public Long getOrganizerId() {
+		return user.getOrganizerProfile() != null ? user.getOrganizerProfile().getId() : null;
+	}
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return user.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName())).toList();
