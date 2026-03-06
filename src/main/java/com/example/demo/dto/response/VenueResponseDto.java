@@ -5,8 +5,10 @@ import java.math.BigDecimal;
 public record VenueResponseDto(
 		
 		String name,
-		String addressLine1,
-		String addressLine2,
+		String street,
+		String houseNumber,
+		String unit,
+		String countryCode,
 		String city,
 		String postalCode,
 		BigDecimal lat,

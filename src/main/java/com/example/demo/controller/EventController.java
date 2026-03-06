@@ -11,6 +11,8 @@ import com.example.demo.custom.CustomUserDetails;
 import com.example.demo.dto.request.VenueRequestDto;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.VenueResponseDto;
+import com.example.demo.entity.EventVenue;
+import com.example.demo.exception.NotOrganizerException;
 import com.example.demo.mapper.VenueMapper;
 import com.example.demo.service.interfaces.IEventVenuService;
 
@@ -28,8 +30,10 @@ public class EventController {
 
 	@PostMapping("/create-venue")
 	public ResponseEntity<ApiResponse<VenueResponseDto>> addVenue(@Valid @RequestBody VenueRequestDto dto, @AuthenticationPrincipal CustomUserDetails user) {
-		venueService.create(VenueMapper.venurRequestDtoToEventVenu(dto), user.getOrganizerId());
-		return null;
+		if(user.getOrganizerId() == null) throw new NotOrganizerException("Only organizer can add venue");
+		EventVenue venue = venueService.create(VenueMapper.venueRequestDtoToEventVenu(dto), user.getOrganizerId());
+		VenueResponseDto res = VenueMapper.venueResponse(venue);
+		return ResponseEntity.ok(ApiResponse.created(res));
 	}
 	
 }

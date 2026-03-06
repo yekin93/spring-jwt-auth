@@ -13,7 +13,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,21 +32,20 @@ public class EventVenue {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@OneToMany(mappedBy = "venue", fetch = FetchType.LAZY)
-	private List<Event> events;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "organizer_id", nullable = false)
-	private OrganizerProfile organizer;
-	
 	@Column(nullable = false, length = 200)
 	private String name;
 	
-	@Column(name = "address_line1", nullable = false, length = 200)
-	private String addressLine1;
+	@Column(nullable = false, length = 255)
+	private String street;
 	
-	@Column(name = "address_line2", length = 200)
-	private String addressLine2;
+	@Column(name = "house_number", nullable = false, length = 50)
+	private String houseNumber;
+	
+	@Column(length = 50)
+	private String unit;
+	
+	@Column(name = "country_code", nullable = false, length = 3)
+	private String countryCode;
 	
 	@Column(nullable = false, length = 120)
 	private String city;
@@ -52,9 +54,13 @@ public class EventVenue {
 	private String postalCode;
 	
 	@Column(precision = 10, scale = 7)
+	@DecimalMax(value = "90.0", inclusive = true)
+	@DecimalMin(value = "-90.0", inclusive = true)
 	private BigDecimal lat;
 	
 	@Column(precision = 10, scale = 7)
+	@DecimalMax(value = "180.0", inclusive = true)
+	@DecimalMin(value = "-180.0", inclusive = true)
 	private BigDecimal lng;
 	
 	@Column(name = "modified_at")
@@ -62,4 +68,10 @@ public class EventVenue {
 	
 	@Column(name = "created_at")
 	private Instant createdAt;
+	
+	@PrePersist
+	public void prePersist() {
+		this.createdAt = Instant.now();
+		this.modifiedAt = this.createdAt;
+	}
 }

@@ -1,0 +1,1 @@
+ALTER TABLE event_venue ADD COLUMN street VARCHAR(255) NOT NULL AFTER `name`;
