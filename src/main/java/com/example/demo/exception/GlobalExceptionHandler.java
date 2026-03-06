@@ -79,4 +79,9 @@ public class GlobalExceptionHandler {
 			}
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("status", HttpStatus.CONFLICT.value(), "message", message, "time", Instant.now(), "req.desc", request.getDescription(false)));
 	}
+	
+	@ExceptionHandler(NotOrganizerException.class)
+	public ResponseEntity<Map<String, Object>> handleNotOrganizerException(NotOrganizerException ex, HttpServletRequest req){
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("status", HttpStatus.FORBIDDEN.value(), "message", ex.getMessage()));
+	}
 }
